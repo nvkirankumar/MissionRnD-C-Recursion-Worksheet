@@ -43,6 +43,53 @@ P.S: The Above Problem is just a modified version of a popular BackTracking prob
 */
 
 #include "stdafx.h"
+
+int isSafe(int *battlefield, int row, int col)
+{
+	int i, j;
+
+
+	for (i = 0; i < col; i++)
+	if (*((battlefield + row) + i))
+		return 0;
+
+	for (i = row, j = col; i >= 0 && j >= 0; i--, j--)
+	if (*((battlefield + i) + j))
+		return 0;
+
+	for (i = row, j = col; j >= 0 && i<col; i++, j--)
+	if (*((battlefield + i) + j))
+		return 0;
+
+	return 1;
+}
+
+
+
+
+
 int solve_nsnipers(int *battlefield, int n){
-	return 0;
+	if (n < 0)
+		return 0;
+	else{
+		for (int i = 0; i < n; i++)
+		{
+
+			if (isSafe((int*)battlefield, i, n))
+			{
+
+				*((battlefield + i) + n) = 1;
+
+
+				if (solve_nsnipers(battlefield, n + 1))
+					return 1;
+
+
+				*((battlefield + i) + n) = 0;
+			}
+		}
+
+
+		return 1;
+	}
 }

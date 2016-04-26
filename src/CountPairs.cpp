@@ -40,5 +40,5 @@ int count_pairs_wrapper(char *str, int len){
 		return 0;
 	else
 	return count_pairs(str, len, 0,len, &k);
-
+	
 }
