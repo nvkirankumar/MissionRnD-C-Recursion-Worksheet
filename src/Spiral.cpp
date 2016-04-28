@@ -34,7 +34,57 @@ Note : Check the function Parameters ,Its a double pointer .
 #include "stdafx.h"
 #include<stdlib.h>
 
+int lr = 0, td = 1, rl = 2, bt = 3;
+void spiralMatrix(int **mat, int ir, int fr, int ic, int fc, int te, int v, int dir)
+{
+
+	if (v != te)
+	{
+
+
+		int c = 0;
+		switch (dir)
+		{
+		case 0:
+			for (int col = ic; col <= fc; col++)
+			{
+				c++;
+			}
+			spiralMatrix(mat, ir + 1, fr, ic, fc, te, v + c, td);
+			break;
+		case 1:
+			for (int row = ir; row<fr; row++)
+			{
+				printf("%d ", mat[row][fc]);
+				c++;
+			}
+			spiralMatrix(mat, ir, fr, ic, fc - 1, te, v + c, rl);
+			break;
+		case 2:
+			for (int col = fc; col >= ic; col--)
+			{
+				printf("%d ", mat[fr][col]);
+				c++;
+			}
+			spiralMatrix(mat, ir + 1, fr - 1, ic, fc, te, v + c, bt);
+			break;
+		case 3:
+			for (int row = fr; row >= ir; row--)
+			{
+				c++;
+			}
+			spiralMatrix(mat, ir, fr, ic + 1, fc, te, v, td);
+			break;
+		}
+	}
+}
+
+
 int *spiral(int rows, int columns, int **input_array)
 {
-	return NULL;
+
+
+	int ir = 0, ic = 0, fr = rows - 1, fc = columns - 1, te = rows*columns, dir = 0, v = 0;
+	spiralMatrix((int**)input_array, ir, fr, ic, fc, te, v, dir);
+	return *(input_array);
 }
