@@ -31,60 +31,44 @@ Note : Check the function Parameters ,Its a double pointer .
 */
 
 
+
 #include "stdafx.h"
 #include<stdlib.h>
 
-int lr = 0, td = 1, rl = 2, bt = 3;
-void spiralMatrix(int **mat, int ir, int fr, int ic, int fc, int te, int v, int dir)
-{
+void update_spiral_array(int rows, int columns, int **input_array, int x, int y, int x_inc, int y_inc, int limit, int *spiral_array, int count){
+	if (count == rows * columns)
+		return;
 
-	if (v != te)
-	{
-
-
-		int c = 0;
-		switch (dir)
-		{
-		case 0:
-			for (int col = ic; col <= fc; col++)
-			{
-				c++;
-			}
-			spiralMatrix(mat, ir + 1, fr, ic, fc, te, v + c, td);
-			break;
-		case 1:
-			for (int row = ir; row<fr; row++)
-			{
-				printf("%d ", mat[row][fc]);
-				c++;
-			}
-			spiralMatrix(mat, ir, fr, ic, fc - 1, te, v + c, rl);
-			break;
-		case 2:
-			for (int col = fc; col >= ic; col--)
-			{
-				printf("%d ", mat[fr][col]);
-				c++;
-			}
-			spiralMatrix(mat, ir + 1, fr - 1, ic, fc, te, v + c, bt);
-			break;
-		case 3:
-			for (int row = fr; row >= ir; row--)
-			{
-				c++;
-			}
-			spiralMatrix(mat, ir, fr, ic + 1, fc, te, v, td);
-			break;
-		}
+	spiral_array[count++] = input_array[x][y];
+	if ((y == columns - limit) && (x_inc == 0) && (y_inc == 1)){
+		x_inc = 1;
+		y_inc = 0;
 	}
-}
+	else if ((x == rows - limit) && (x_inc == 1) && (y_inc == 0)){
+		x_inc = 0;
+		y_inc = -1;
+	}
+	else if ((y == limit - 1) && (x_inc == 0) && (y_inc == -1)){
+		x_inc = -1;
+		y_inc = 0;
+		limit++;
+	}
+	else if ((x == limit - 1) && (x_inc == -1) && (y_inc == 0)){
+		x_inc = 0;
+		y_inc = 1;
+	}
+	update_spiral_array(rows, columns, input_array, x + x_inc, y + y_inc, x_inc, y_inc, limit, spiral_array, count);
 
+}
 
 int *spiral(int rows, int columns, int **input_array)
 {
+	if (input_array == NULL || rows <= 0 || columns <= 0)
+		return NULL;
 
+	int *spiral_array;
+	spiral_array = (int *)malloc((rows * columns) * sizeof(int));
 
-	int ir = 0, ic = 0, fr = rows - 1, fc = columns - 1, te = rows*columns, dir = 0, v = 0;
-	spiralMatrix((int**)input_array, ir, fr, ic, fc, te, v, dir);
-	return *(input_array);
+	update_spiral_array(rows, columns, input_array, 0, 0, 0, 1, 1, spiral_array, 0);
+	return spiral_array;
 }
