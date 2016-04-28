@@ -29,51 +29,43 @@ more parameters .
 
 #include<stdlib.h>
 
-#include<stdlib.h>
-
-
-int path(int *maze, int rows, int columns, int x1, int y1, int x2, int y2, int x, int y){
-	if (x1 < 0 || y1 < 0 || x1 >= rows || y1 >= columns || maze[(x1 * columns) + y1] == 0)
-		return 0;
-
-	if ((x1 == x2) && (y1 == y2))
-		return 1;
-
-	int up, down, left,right; 
-
-	if (x == x1 - 1 && y == y1)
-		up = 0;
+void get_path(int *maze, int rows, int columns, int x1, int y1, int x2, int y2, bool *path_exist)
+{
+	if (x1 == x2 && y1 == y2 && maze[x1*columns + y1] == 1)
+		(*path_exist) = true;
 	else
-		up = path(maze, rows, columns, x1 - 1, y1, x2, y2, x1, y1);
-
-	if (x == x1 + 1 && y1 == y)
-		down = 0;
-	else
-		down = path(maze, rows, columns, x1 + 1, y1, x2, y2, x1, y1);
-
-	if (x1 == x && y == y1 - 1)
-		left = 0;
-	else
-		left = path(maze, rows, columns, x1, y1 - 1, x2, y2, x1, y1);
-
-	if (x1 == x && y == y1 + 1)
-		right = 0;
-	else
-		right = path(maze, rows, columns, x1, y1 + 1, x2, y2, x1, y1);
-
-
-
-
-	if (up || down || left || right)
-		return 1;
-
-	return 0;
+	{
+		if (x1 - 1 >= 0 && maze[((x1 - 1)*columns) + y1] == 1)
+		{
+			maze[x1*columns + y1] = 0;
+			get_path(maze, rows, columns, x1 - 1, y1, x2, y2, path_exist);
+			maze[x1*columns + y1] = 1;
+		}
+		if (x1 + 1 < rows && maze[(x1 + 1)*columns + y1] == 1)
+		{
+			maze[x1*columns + y1] = 0;
+			get_path(maze, rows, columns, x1 + 1, y1, x2, y2, path_exist);
+			maze[x1*columns + y1] = 1;
+		}
+		if (y1 - 1 >= 0 && maze[x1*columns + (y1 - 1)] == 1)
+		{
+			maze[x1*columns + y1] = 0;
+			get_path(maze, rows, columns, x1, y1 - 1, x2, y2, path_exist);
+			maze[x1*columns + y1] = 1;
+		}
+		if (y1 + 1 < columns && maze[x1*columns + (y1 + 1)] == 1)
+		{
+			maze[x1*columns + y1] = 0;
+			get_path(maze, rows, columns, x1, y1 + 1, x2, y2, path_exist);
+			maze[x1*columns + y1] = 1;
+		}
+	}
 }
-
 int path_exists(int *maze, int rows, int columns, int x1, int y1, int x2, int y2)
 {
-	if (maze == NULL || rows <= 0 || columns <= 0 || (x1 < 0 && x1 >= rows) || (y1 < 0 && y1 >= columns) || (x2 < 0 && x2 >= rows) || (y2 < 0 && y2 >= columns) || maze[(x1 * columns) + y1] == 0 || maze[(x2 * columns) + y2] == 0)
-		return 0;
-
-	return path(maze, rows, columns, x1, y1, x2, y2, -1, -1);
+	bool path_exist = false;
+	get_path(maze, rows, columns, x1, y1, x2, y2, &path_exist);
+	if (path_exist)
+		return 1;
+	else return 0;
 }

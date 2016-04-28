@@ -43,54 +43,42 @@ P.S: The Above Problem is just a modified version of a popular BackTracking prob
 */
 
 #include "stdafx.h"
-
-int isSafe(int *battlefield, int row, int col)
+int is_safe(int *arr, int size, int row, int column)
 {
 	int i, j;
-
-
-	for (i = 0; i < col; i++)
-	if (*((battlefield + row) + i))
+	for (i = 0; i<column; i++)
+	if (*((arr + row*size) + i)==1)
 		return 0;
 
-	for (i = row, j = col; i >= 0 && j >= 0; i--, j--)
-	if (*((battlefield + i) + j))
+	for (i = row, j = column; j >= 0 && i<size; i++, j--)
+	if (*((arr + i*size) + j)==1)
 		return 0;
-
-	for (i = row, j = col; j >= 0 && i<col; i++, j--)
-	if (*((battlefield + i) + j))
+	for (i = row, j = column; i >= 0 && j >= 0; i--, j--)
+	if (*((arr + i*size) + j) == 1)
 		return 0;
-
 	return 1;
 }
-
-
-
-
-
-int solve_nsnipers(int *battlefield, int n){
-	if (n < 0)
-		return 0;
-	else{
-		
-		for (int i = 0; i < n; i++)
-		{
-
-			if (isSafe((int*)battlefield, i, n))
-			{
-
-				*((battlefield + i) + n) = 1;
-
-
-				if (solve_nsnipers(battlefield, n + 1))
-					return 1;
-
-
-				*((battlefield + i) + n) = 0;
-			}
-		}
-
-
+int solve_nsnipers1(int *battlefield, int n, int column)
+{
+	int i;
+	if (column >= n)
 		return 1;
+
+	for (i = 0; i<n; i++)
+	{
+		if (is_safe(battlefield, n, i, column))
+		{
+			*((battlefield + i*n) + column) = 1;
+			if (solve_nsnipers1(battlefield, n, column + 1))
+				return 1;
+			*((battlefield + i*n) + column) = 0;
+		}
 	}
+	return 0;
+}
+int solve_nsnipers(int *battlefield, int n){
+	if (battlefield)
+		return solve_nsnipers1(battlefield, n, 0);
+	else
+		return 0;
 }
